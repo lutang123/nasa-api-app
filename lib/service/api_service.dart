@@ -17,6 +17,8 @@ class ApiService {
         'https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY';
 
     final response = await http.get(Uri.parse(apiUrl));
+    
+    print('response.statusCode: ${response.statusCode}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
