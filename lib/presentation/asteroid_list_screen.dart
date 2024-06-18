@@ -71,66 +71,55 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
               ),
             ],
           ),
-          body: Stack(
-            children: [
-              // const NetworkImageWidget(
-              //     'https://d.newsweek.com/en/full/1043290/7-26-asteroids.jpg'),
-              Center(
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SizedBox(
-                      width: min(constraints.maxWidth, 600),
-                      child: FutureBuilder<List<Asteroid>>(
-                        future: futureAsteroids,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return const Center(
-                                child: Text('No data available'));
-                          } else {
-                            return ListView.builder(
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                final asteroid = snapshot.data![index];
-                                return Card(
-                                  color: Colors.black54,
-                                  child: ListTile(
-                                    title: Text(asteroid.name,
-                                        style: const TextStyle(
-                                            color: Colors.white)),
-                                    subtitle: Text(
-                                        'Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}',
-                                        style: const TextStyle(
-                                            color: Colors.white70)),
-                                    trailing: Checkbox(
-                                      activeColor: Colors.white,
-                                      // hoverColor: Colors.white,
-                                      checkColor: Colors.black,
-                                      value: asteroid.checked,
-                                      onChanged: (bool? value) {
-                                        toggleCheck(index);
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
+          body: Center(
+            child: LayoutBuilder(builder: (context, constraints) {
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+                  width: min(constraints.maxWidth, 600),
+                  child: FutureBuilder<List<Asteroid>>(
+                    future: futureAsteroids,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No data available'));
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final asteroid = snapshot.data![index];
+                            return Card(
+                              color: Colors.black54,
+                              child: ListTile(
+                                title: Text(asteroid.name,
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                                subtitle: Text(
+                                    'Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}',
+                                    style:
+                                        const TextStyle(color: Colors.white70)),
+                                trailing: Checkbox(
+                                  activeColor: Colors.white,
+                                  // hoverColor: Colors.white,
+                                  checkColor: Colors.black,
+                                  value: asteroid.checked,
+                                  onChanged: (bool? value) {
+                                    toggleCheck(index);
+                                  },
+                                ),
+                              ),
                             );
-                          }
-                        },
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ],
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
+            }),
           ),
         ),
       ],

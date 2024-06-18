@@ -40,45 +40,39 @@ class _CheckedAsteroidsScreenState extends State<CheckedAsteroidsScreen> {
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold)),
             ),
-            body: Stack(
-              children: [
-                Center(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    return Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: SizedBox(
-                        width: min(constraints.maxWidth, 600),
-                        child: ListView.builder(
-                          itemCount: widget.checkedAsteroids.length,
-                          itemBuilder: (context, index) {
-                            final asteroid = widget.checkedAsteroids[index];
-                            return Card(
-                              color: Colors.black54,
-                              child: ListTile(
-                                title: Text(asteroid.name,
-                                    style:
-                                        const TextStyle(color: Colors.white)),
-                                subtitle: Text(
-                                    'Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}',
-                                    style:
-                                        const TextStyle(color: Colors.white70)),
-                                trailing: Checkbox(
-                                  activeColor: Colors.white,
-                                  checkColor: Colors.black,
-                                  value: asteroid.checked,
-                                  onChanged: (bool? value) {
-                                    toggleCheck(index);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ],
+            body: Center(
+              child: LayoutBuilder(builder: (context, constraints) {
+                return Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    width: min(constraints.maxWidth, 600),
+                    child: ListView.builder(
+                      itemCount: widget.checkedAsteroids.length,
+                      itemBuilder: (context, index) {
+                        final asteroid = widget.checkedAsteroids[index];
+                        return Card(
+                          color: Colors.black54,
+                          child: ListTile(
+                            title: Text(asteroid.name,
+                                style: const TextStyle(color: Colors.white)),
+                            subtitle: Text(
+                                'Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}',
+                                style: const TextStyle(color: Colors.white70)),
+                            trailing: Checkbox(
+                              activeColor: Colors.white,
+                              checkColor: Colors.black,
+                              value: asteroid.checked,
+                              onChanged: (bool? value) {
+                                toggleCheck(index);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }),
             )
 
             // ListView.builder(
