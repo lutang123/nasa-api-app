@@ -1,43 +1,19 @@
-import 'dart:math';
-
+// asteroid_list_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nasa_api_app/presentation/checked_asteroids_screen.dart';
 import 'package:nasa_api_app/presentation/commonWidget/image_widget.dart';
-import 'package:nasa_api_app/service/api_service.dart';
-import 'package:nasa_api_app/model/asteroid.dart';
+import 'package:nasa_api_app/providers/asteroids_provider.dart';
 
-class AsteroidListScreen extends StatefulWidget {
+class AsteroidListScreen extends ConsumerWidget {
   final String title;
   const AsteroidListScreen({super.key, required this.title});
 
   @override
-  State<AsteroidListScreen> createState() => _AsteroidListScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asteroids = ref.watch(asteroidProvider);
+    final asteroidNotifier = ref.read(asteroidProvider.notifier);
 
-class _AsteroidListScreenState extends State<AsteroidListScreen> {
-  late Future<List<Asteroid>> futureAsteroids;
-  List<Asteroid> asteroids = [];
-
-  @override
-  void initState() {
-    super.initState();
-    futureAsteroids = ApiService().fetchAsteroids();
-    futureAsteroids.then((data) {
-      setState(() {
-        asteroids = data;
-      });
-    });
-  }
-
-  void toggleCheck(int index) {
-    setState(() {
-      asteroids[index] =
-          asteroids[index].copyWith(checked: !asteroids[index].checked);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Stack(
       children: [
         const NetworkImageWidget(
@@ -47,25 +23,19 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: const Text('Asteroid List',
-                style: TextStyle(
+            title: Text(title,
+                style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold)),
             actions: [
               TextButton.icon(
-                label: const Text(
-                  'Show Checked',
-                  style: TextStyle(color: Colors.white),
-                ),
+                label: const Text('Show Checked',
+                    style: TextStyle(color: Colors.white)),
                 icon: const Icon(Icons.check_box, color: Colors.white),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CheckedAsteroidsScreen(
-                          checkedAsteroids: asteroids
-                              .where((asteroid) => asteroid.checked)
-                              .toList()),
-                    ),
+                        builder: (context) => const CheckedAsteroidsScreen()),
                   );
                 },
               ),
@@ -76,21 +46,22 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
               return Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: SizedBox(
-                  width: min(constraints.maxWidth, 600),
-                  child: FutureBuilder<List<Asteroid>>(
-                    future: futureAsteroids,
+                  width:
+                      constraints.maxWidth < 600 ? constraints.maxWidth : 600,
+                  child: FutureBuilder(
+                    future: asteroidNotifier.fetchAsteroids(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      } else if (asteroids.isEmpty) {
                         return const Center(child: Text('No data available'));
                       } else {
                         return ListView.builder(
-                          itemCount: snapshot.data!.length,
+                          itemCount: asteroids.length,
                           itemBuilder: (context, index) {
-                            final asteroid = snapshot.data![index];
+                            final asteroid = asteroids[index];
                             return Card(
                               color: Colors.black54,
                               child: ListTile(
@@ -103,11 +74,10 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
                                         const TextStyle(color: Colors.white70)),
                                 trailing: Checkbox(
                                   activeColor: Colors.white,
-                                  // hoverColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: asteroid.checked,
                                   onChanged: (bool? value) {
-                                    toggleCheck(index);
+                                    asteroidNotifier.toggleChecked(asteroid);
                                   },
                                 ),
                               ),
