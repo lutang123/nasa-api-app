@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "nasaapi" "\0"
+            VALUE "FileDescription", "nasa_api_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "nasaapi" "\0"
+            VALUE "InternalName", "nasa_api_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "nasaapi.exe" "\0"
-            VALUE "ProductName", "nasaapi" "\0"
+            VALUE "OriginalFilename", "nasa_api_app.exe" "\0"
+            VALUE "ProductName", "nasa_api_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
