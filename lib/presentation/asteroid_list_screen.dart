@@ -16,28 +16,33 @@ class AsteroidListScreen extends StatefulWidget {
 
 class _AsteroidListScreenState extends State<AsteroidListScreen> {
   late Future<List<Asteroid>> futureAsteroids;
+
   List<Asteroid> asteroids = [];
 
   @override
   void initState() {
     super.initState();
     futureAsteroids = ApiService().fetchAsteroids();
-    futureAsteroids.then((data) {
-      setState(() {
-        asteroids = data;
-      });
-    });
   }
 
-  void toggleCheck(int index) {
+  void toggleChecked(Asteroid asteroid) {
     setState(() {
-      asteroids[index] =
-          asteroids[index].copyWith(checked: !asteroids[index].checked);
+      int index = asteroids.indexOf(asteroid);
+      if (index != -1) {
+        asteroids[index] =
+            asteroids[index].copyWith(checked: !asteroids[index].checked);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    //Todo: move to onPressed
+    final checkedAsteroids =
+        asteroids.where((asteroid) => asteroid.checked).toList();
+
+    print(
+        '********** build first screen checkedAsteroids length  : ${checkedAsteroids.length}');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Asteroid List'),
@@ -50,9 +55,8 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CheckedAsteroidsScreen(
-                      checkedAsteroids: asteroids
-                          .where((asteroid) => asteroid.checked)
-                          .toList()),
+                      checkedAsteroids: checkedAsteroids,
+                      updateAsteroidCheckedState: toggleChecked),
                 ),
               );
             },
@@ -79,10 +83,11 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(child: Text('No data available'));
                       } else {
+                        asteroids = snapshot.data!;
                         return ListView.builder(
-                          itemCount: snapshot.data!.length,
+                          itemCount: asteroids.length,
                           itemBuilder: (context, index) {
-                            final asteroid = snapshot.data![index];
+                            final asteroid = asteroids[index];
                             return Card(
                               color: Colors.black54,
                               child: ListTile(
@@ -93,13 +98,16 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
                                     'Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}',
                                     style:
                                         const TextStyle(color: Colors.white70)),
+                                //Todo: refactor to a separate widget
                                 trailing: Checkbox(
                                   activeColor: Colors.white,
-                                  // hoverColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: asteroid.checked,
                                   onChanged: (bool? value) {
-                                    toggleCheck(index);
+                                    setState(() {
+                                      asteroids[index] = asteroid.copyWith(
+                                          checked: value ?? false);
+                                    });
                                   },
                                 ),
                               ),

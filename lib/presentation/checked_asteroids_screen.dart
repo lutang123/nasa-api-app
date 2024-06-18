@@ -6,23 +6,47 @@ import 'package:nasa_api_app/presentation/commonWidget/image_widget.dart';
 
 class CheckedAsteroidsScreen extends StatefulWidget {
   final List<Asteroid> checkedAsteroids;
+  final Function(Asteroid asteroid) updateAsteroidCheckedState;
 
-  const CheckedAsteroidsScreen({super.key, required this.checkedAsteroids});
+  const CheckedAsteroidsScreen(
+      {super.key,
+      required this.checkedAsteroids,
+      required this.updateAsteroidCheckedState});
 
   @override
   State<CheckedAsteroidsScreen> createState() => _CheckedAsteroidsScreenState();
 }
 
 class _CheckedAsteroidsScreenState extends State<CheckedAsteroidsScreen> {
-  void toggleCheck(int index) {
+  List<Asteroid> newCheckedAsteroids = [];
+
+  @override
+  void initState() {
+    super.initState();
     setState(() {
-      widget.checkedAsteroids[index] = widget.checkedAsteroids[index]
-          .copyWith(checked: !widget.checkedAsteroids[index].checked);
+      newCheckedAsteroids = List<Asteroid>.from(widget.checkedAsteroids);
+    });
+  }
+
+  void toggleChecked(Asteroid asteroid) {
+    setState(() {
+      widget.updateAsteroidCheckedState(asteroid);
+
+      int index = newCheckedAsteroids.indexOf(asteroid);
+      if (index != -1) {
+        newCheckedAsteroids[index] = newCheckedAsteroids[index]
+            .copyWith(checked: !newCheckedAsteroids[index].checked);
+        if (!newCheckedAsteroids[index].checked) {
+          newCheckedAsteroids.removeAt(index);
+        }
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print(
+        '........build second screen: newCheckedAsteroids length  : ${newCheckedAsteroids.length}');
     return Scaffold(
         appBar: AppBar(
           title: const Text('Checked Asteroids'),
@@ -38,9 +62,9 @@ class _CheckedAsteroidsScreenState extends State<CheckedAsteroidsScreen> {
                   child: SizedBox(
                     width: min(constraints.maxWidth, 600),
                     child: ListView.builder(
-                      itemCount: widget.checkedAsteroids.length,
+                      itemCount: newCheckedAsteroids.length,
                       itemBuilder: (context, index) {
-                        final asteroid = widget.checkedAsteroids[index];
+                        final asteroid = newCheckedAsteroids[index];
                         return Card(
                           color: Colors.black54,
                           child: ListTile(
@@ -50,13 +74,12 @@ class _CheckedAsteroidsScreenState extends State<CheckedAsteroidsScreen> {
                                 'Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}',
                                 style: const TextStyle(color: Colors.white70)),
                             trailing: Checkbox(
-                              activeColor: Colors.white,
-                              checkColor: Colors.black,
-                              value: asteroid.checked,
-                              onChanged: (bool? value) {
-                                toggleCheck(index);
-                              },
-                            ),
+                                activeColor: Colors.white,
+                                checkColor: Colors.black,
+                                value: asteroid.checked,
+                                onChanged: (bool? value) {
+                                  toggleChecked(asteroid);
+                                }),
                           ),
                         );
                       },
@@ -66,18 +89,6 @@ class _CheckedAsteroidsScreenState extends State<CheckedAsteroidsScreen> {
               }),
             ),
           ],
-        )
-
-        // ListView.builder(
-        //   itemCount: checkedAsteroids.length,
-        //   itemBuilder: (context, index) {
-        //     final asteroid = checkedAsteroids[index];
-        //     return ListTile(
-        //       title: Text(asteroid.name),
-        //       subtitle: Text('Hazardous: ${asteroid.isHazardous ? 'Yes' : 'No'}'),
-        //     );
-        //   },
-        // ),
-        );
+        ));
   }
 }

@@ -1,9 +1,9 @@
 class Asteroid {
   final String name;
   final bool isHazardous;
-  bool checked;
+  final bool checked;
 
-  Asteroid({
+  const Asteroid({
     required this.name,
     required this.isHazardous,
     this.checked = false,
@@ -19,7 +19,7 @@ class Asteroid {
   Asteroid copyWith({
     String? name,
     bool? isHazardous,
-     bool? checked,
+    bool? checked,
   }) {
     return Asteroid(
       name: name ?? this.name,
@@ -29,16 +29,17 @@ class Asteroid {
   }
 
   @override
-  String toString() => 'Asteroid(name: $name, isHazardous: $isHazardous, checked: $checked)';
+  String toString() =>
+      'Asteroid(name: $name, isHazardous: $isHazardous, checked: $checked)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Asteroid &&
-      other.name == name &&
-      other.isHazardous == isHazardous &&
-      other.checked == checked;
+        other.name == name &&
+        other.isHazardous == isHazardous &&
+        other.checked == checked;
   }
 
   @override
