@@ -1,12 +1,29 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:nasa_api_app/presentation/checked_asteroids_screen.dart';
 import 'package:nasa_api_app/presentation/commonWidget/image_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_api_app/providers/asteroid_provider.dart';
 
-class AsteroidListScreen extends StatelessWidget {
+class AsteroidListScreen extends StatefulWidget {
   final String title;
   const AsteroidListScreen({super.key, required this.title});
+
+  @override
+  State<AsteroidListScreen> createState() => _AsteroidListScreenState();
+}
+
+class _AsteroidListScreenState extends State<AsteroidListScreen> {
+  Future? _future;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _future =
+        Provider.of<AsteroidProvider>(context, listen: false).fetchAsteroids();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +36,7 @@ class AsteroidListScreen extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: Text(title,
+            title: Text(widget.title,
                 style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold)),
             actions: [
@@ -45,12 +62,11 @@ class AsteroidListScreen extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: SizedBox(
-                  width:
-                      constraints.maxWidth < 600 ? constraints.maxWidth : 600,
+                  width: min(constraints.maxWidth, 600),
                   child: Consumer<AsteroidProvider>(
                     builder: (context, provider, child) {
                       return FutureBuilder(
-                        future: provider.fetchAsteroids(),
+                        future: _future,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
