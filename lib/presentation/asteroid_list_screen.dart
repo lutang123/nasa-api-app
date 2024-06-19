@@ -103,7 +103,6 @@ class _AsteroidListScreenState extends State<AsteroidListScreen> {
                                         const TextStyle(color: Colors.white70)),
                                 trailing: Checkbox(
                                   activeColor: Colors.white,
-                                  // hoverColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: asteroid.checked,
                                   onChanged: (bool? value) {
